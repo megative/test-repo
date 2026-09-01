@@ -1,0 +1,359 @@
+<title>UTC Now</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+
+<style>
+  :root {
+    --ground:      #eef1f5;
+    --panel:       #f8fAfc;
+    --edge:        #d3dae4;
+    --ink:         #131820;
+    --ink-soft:    #58626f;
+    --ink-faint:   #8b95a3;
+    --accent:      #b4611a;
+    --accent-soft: #e8dccc;
+    --shadow:      0 1px 2px rgba(19, 24, 32, .06), 0 12px 32px -18px rgba(19, 24, 32, .35);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0d1116;
+      --panel:       #141a21;
+      --edge:        #263039;
+      --ink:         #e8edf3;
+      --ink-soft:    #9aa6b4;
+      --ink-faint:   #6b7885;
+      --accent:      #e8a25c;
+      --accent-soft: #3a2f22;
+      --shadow:      0 1px 2px rgba(0, 0, 0, .4), 0 16px 40px -20px rgba(0, 0, 0, .8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0d1116;
+    --panel:       #141a21;
+    --edge:        #263039;
+    --ink:         #e8edf3;
+    --ink-soft:    #9aa6b4;
+    --ink-faint:   #6b7885;
+    --accent:      #e8a25c;
+    --accent-soft: #3a2f22;
+    --shadow:      0 1px 2px rgba(0, 0, 0, .4), 0 16px 40px -20px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+  }
+
+  main {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--edge);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---- clock ---- */
+
+  .clock {
+    padding: 34px 32px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .mark {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 1.5rem;
+    line-height: 1;
+    letter-spacing: .01em;
+  }
+
+  .mark em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .zone {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--ink-faint);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: blink 1s steps(1, end) infinite;
+  }
+
+  @keyframes blink { 50% { opacity: .2; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse { animation: none; }
+  }
+
+  .time {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    font-size: clamp(3rem, 15.5vw, 5.25rem);
+    line-height: .95;
+    letter-spacing: -.03em;
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: .04em;
+  }
+
+  .time .sep { color: var(--ink-faint); font-weight: 400; }
+
+  .time .sec {
+    font-size: .44em;
+    letter-spacing: -.01em;
+    color: var(--accent);
+    margin-left: .16em;
+  }
+
+  .date {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-size: 1.3rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ---- readouts ---- */
+
+  .readouts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--edge);
+  }
+
+  .readout {
+    padding: 14px 18px 15px;
+    border-bottom: 1px solid var(--edge);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }
+
+  .readout:nth-child(odd) { border-right: 1px solid var(--edge); }
+  .readout:nth-last-child(-n+2) { border-bottom: 0; }
+
+  .readout dt {
+    font-size: .62rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    color: var(--ink-faint);
+  }
+
+  .readout dd {
+    margin: 0;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: .92rem;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  /* ---- copy row ---- */
+
+  .iso-row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .iso {
+    flex: 1;
+    min-width: 0;
+    padding: 14px 18px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: .85rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: .72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 0;
+    border-left: 1px solid var(--edge);
+    padding: 0 20px;
+    cursor: pointer;
+    transition: filter .15s ease;
+  }
+
+  button:hover { filter: brightness(.96); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: -4px; }
+
+  footer {
+    font-size: .72rem;
+    color: var(--ink-faint);
+    text-align: center;
+    letter-spacing: .02em;
+  }
+
+  @media (max-width: 420px) {
+    .clock { padding: 26px 22px 24px; }
+    .readouts { grid-template-columns: minmax(0, 1fr); }
+    .readout:nth-child(odd) { border-right: 0; }
+    .readout:nth-last-child(2) { border-bottom: 1px solid var(--edge); }
+  }
+</style>
+
+<main>
+  <section class="card clock">
+    <div class="masthead">
+      <div class="mark">UTC <em>now</em></div>
+      <div class="zone"><span class="pulse" aria-hidden="true"></span>Zulu · UTC+00:00</div>
+    </div>
+
+    <p class="time" aria-live="off">
+      <span id="hh">--</span><span class="sep">:</span><span id="mm">--</span><span class="sec" id="ss">--</span>
+    </p>
+
+    <p class="date" id="date">&nbsp;</p>
+  </section>
+
+  <section class="card">
+    <dl class="readouts">
+      <div class="readout"><dt>Your local time</dt><dd id="local">—</dd></div>
+      <div class="readout"><dt>Offset from UTC</dt><dd id="offset">—</dd></div>
+      <div class="readout"><dt>Unix epoch</dt><dd id="epoch">—</dd></div>
+      <div class="readout"><dt>Day / week of year</dt><dd id="doy">—</dd></div>
+    </dl>
+  </section>
+
+  <section class="card iso-row">
+    <div class="iso" id="iso">—</div>
+    <button id="copy" type="button">Copy</button>
+  </section>
+
+  <footer>Reads your device clock. Accurate to however well it is synced.</footer>
+</main>
+
+<script>
+  const pad = (n, w = 2) => String(n).padStart(w, "0");
+
+  const el = {
+    hh: document.getElementById("hh"),
+    mm: document.getElementById("mm"),
+    ss: document.getElementById("ss"),
+    date: document.getElementById("date"),
+    local: document.getElementById("local"),
+    offset: document.getElementById("offset"),
+    epoch: document.getElementById("epoch"),
+    doy: document.getElementById("doy"),
+    iso: document.getElementById("iso"),
+    copy: document.getElementById("copy"),
+  };
+
+  const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const MONTHS = ["January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"];
+
+  function isoWeek(d) {
+    const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    const yearStart = Date.UTC(t.getUTCFullYear(), 0, 1);
+    return Math.ceil(((t - yearStart) / 86400000 + 1) / 7);
+  }
+
+  function dayOfYear(d) {
+    const start = Date.UTC(d.getUTCFullYear(), 0, 1);
+    return Math.floor((Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - start) / 86400000) + 1;
+  }
+
+  function localOffset(d) {
+    const mins = -d.getTimezoneOffset();
+    const sign = mins < 0 ? "−" : "+";
+    const abs = Math.abs(mins);
+    return `${sign}${pad(Math.floor(abs / 60))}:${pad(abs % 60)}`;
+  }
+
+  let lastSecond = -1;
+
+  function render() {
+    const d = new Date();
+    const s = d.getUTCSeconds();
+
+    if (s !== lastSecond) {
+      lastSecond = s;
+
+      el.hh.textContent = pad(d.getUTCHours());
+      el.mm.textContent = pad(d.getUTCMinutes());
+      el.ss.textContent = pad(s);
+
+      el.date.textContent =
+        `${DAYS[d.getUTCDay()]}, ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+
+      el.local.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      el.offset.textContent = localOffset(d);
+      el.epoch.textContent = Math.floor(d.getTime() / 1000);
+      el.doy.textContent = `${dayOfYear(d)} / W${pad(isoWeek(d))}`;
+      el.iso.textContent = d.toISOString();
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
+
+  el.copy.addEventListener("click", async () => {
+    const value = el.iso.textContent;
+    try {
+      await navigator.clipboard.writeText(value);
+      el.copy.textContent = "Copied";
+    } catch {
+      el.copy.textContent = "Select it";
+    }
+    setTimeout(() => { el.copy.textContent = "Copy"; }, 1400);
+  });
+</script>
